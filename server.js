@@ -11,6 +11,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_FILE = path.join(__dirname, "data", "calendars.json");
 const PORT = Number(process.env.PORT) || 3000;
 const DESIGNS = new Set(["festive", "beige"]);
+const PUBLIC_DIR = path.join(__dirname, "public");
 
 function nowDate() {
   if (process.env.ADVENT_NOW) return new Date(process.env.ADVENT_NOW);
