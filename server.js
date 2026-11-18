@@ -244,7 +244,6 @@ async function serveStatic(res, pathname) {
     send(res, 404, { error: "Not found" });
   }
 }
-
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
@@ -257,13 +256,14 @@ const server = http.createServer(async (req, res) => {
       return;
     }
     await serveStatic(res, url.pathname);
-    js
   } catch (error) {
     console.error("Request failed:", error);
-    send(res, error.status || 500, { error: error.status ? error.message : "Something went wrong." });
+    send(res, error.status || 500, {
+      error: error.status ? error.message : "Something went wrong."
+    });
   }
 });
 
 server.listen(PORT, () => {
   console.log(`Advent calendar running at http://localhost:${PORT}`);
-});
+});;
