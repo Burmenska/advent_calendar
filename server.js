@@ -5,9 +5,9 @@ import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { pickWishes } from "./wishes.js";
 import { describeDoors } from "./dates.js";
+import pg from "pg";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const PUBLIC_DIR = path.join(__dirname, "public");
 const DATA_FILE = path.join(__dirname, "data", "calendars.json");
 const PORT = Number(process.env.PORT) || 3000;
 const DESIGNS = new Set(["festive", "beige"]);
@@ -26,30 +26,91 @@ function adventYear(date) {
   );
 }
 
-async function readDb() {
-  try {
-    return JSON.parse(await fs.readFile(DATA_FILE, "utf8"));
-  } catch (error) {
-    if (error.code === "ENOENT") return { calendars: {} };
-    throw error;
+const pool = new pg.Pool({
+  connectionString: process.env.AC_DB_DATABASE_URL,
+  max: 2,
+  connectionTimeoutMillis: 10000,
+  idleTimeoutMillis: 10000
+});
+
+pool.on("error", (error) => {
+  console.error("Database pool error:", error);
+});
+
+let databaseReady;
+
+function ensureDatabase() {
+  if (!databaseReady) {
+    databaseReady = (async () => {
+      if (!process.env.AC_DB_DATABASE_URL) {
+        throw new Error("AC_DB_DATABASE_URL is not configured.");
+      }
+
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS advent_app_state (
+          id INTEGER PRIMARY KEY CHECK (id = 1),
+          data JSONB NOT NULL
+        )
+      `);
+
+      await pool.query(
+        `INSERT INTO advent_app_state (id, data)
+         VALUES (1, $1::jsonb)
+         ON CONFLICT (id) DO NOTHING`,
+        [JSON.stringify({ calendars: {} })]
+      );
+    })().catch((error) => {
+      databaseReady = undefined;
+      throw error;
+    });
   }
+
+  return databaseReady;
 }
 
-let writeChain = Promise.resolve();
+async function readDb() {
+  await ensureDatabase();
 
-function updateDb(mutator) {
-  const run = writeChain.then(async () => {
-    const db = await readDb();
-    const result = await mutator(db);
-    await fs.mkdir(path.dirname(DATA_FILE), { recursive: true });
-    await fs.writeFile(DATA_FILE, JSON.stringify(db, null, 2));
-    return result;
-  });
-  writeChain = run.then(
-    () => undefined,
-    () => undefined
+  const result = await pool.query(
+    "SELECT data FROM advent_app_state WHERE id = 1"
   );
-  return run;
+
+  return result.rows[0].data;
+}
+
+async function updateDb(mutator) {
+  await ensureDatabase();
+
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    const result = await client.query(
+      "SELECT data FROM advent_app_state WHERE id = 1 FOR UPDATE"
+    );
+
+    const db = result.rows[0].data;
+    const returnValue = await mutator(db);
+
+    await client.query(
+      "UPDATE advent_app_state SET data = $1::jsonb WHERE id = 1",
+      [JSON.stringify(db)]
+    );
+
+    await client.query("COMMIT");
+    return returnValue;
+  } catch (error) {
+    try {
+      await client.query("ROLLBACK");
+    } catch (rollbackError) {
+      console.error("Database rollback failed:", rollbackError);
+    }
+
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
 function send(res, status, body) {
@@ -266,4 +327,4 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
   console.log(`Advent calendar running at http://localhost:${PORT}`);
-});;
+});
