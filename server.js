@@ -257,7 +257,9 @@ const server = http.createServer(async (req, res) => {
       return;
     }
     await serveStatic(res, url.pathname);
+    js
   } catch (error) {
+    console.error("Request failed:", error);
     send(res, error.status || 500, { error: error.status ? error.message : "Something went wrong." });
   }
 });
