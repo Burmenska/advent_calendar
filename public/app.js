@@ -23,11 +23,6 @@ const PAGE_COPY = {
       id: "elegant",
       name: "Winter Elegance",
       copy: "A decorated snowy house, with glowing windows for each December day."
-    },
-    {
-      id: "surprise",
-      name: "Christmas Surprise",
-      copy: "A colourful Christmas tree, with numbered baubles to open."
     }
   ]
 };
@@ -37,11 +32,129 @@ const DESIGNS = PAGE_COPY.designs;
 
 const DESIGN_ART = {
   festive: "/designs/festive.jpg",
+  festiveOpen: "/designs/festive-open.jpg",
   elegant: "/designs/elegant.jpg",
-  surprise: "/designs/surprise.jpg",
+  elegantOpen: "/designs/elegant-open.jpg",
   beige: "/designs/elegant.jpg",
   main: "/designs/main-bg.jpg"
 };
+
+const OPEN_ART = {
+  elegant: {
+    closed: DESIGN_ART.elegant,
+    open: DESIGN_ART.elegantOpen,
+    widthMul: 2.35,
+    heightMul: 1.55,
+    yNudge: 0.08
+  },
+  festive: {
+    closed: DESIGN_ART.festive,
+    open: DESIGN_ART.festiveOpen,
+    widthMul: 1.35,
+    heightMul: 1.35,
+    yNudge: 0.02,
+    byDay: {
+      1: { widthMul: 1.12, heightMul: 1.08 },
+      2: { widthMul: 1.12, heightMul: 1.08 },
+      3: { widthMul: 1.12, heightMul: 1.08 },
+      4: { widthMul: 1.12, heightMul: 1.08 },
+      5: { widthMul: 1.18, heightMul: 1.22 },
+      6: { widthMul: 1.18, heightMul: 1.22 },
+      7: { widthMul: 1.18, heightMul: 1.22 },
+      8: { widthMul: 1.18, heightMul: 1.22 },
+      9: { widthMul: 1.18, heightMul: 1.22 },
+      10: { widthMul: 1.18, heightMul: 1.22 },
+      11: { widthMul: 1.18, heightMul: 1.22 },
+      12: { widthMul: 1.18, heightMul: 1.22 },
+      13: { widthMul: 1.18, heightMul: 1.22 },
+      14: { widthMul: 1.18, heightMul: 1.22 },
+      15: { widthMul: 1.18, heightMul: 1.22 },
+      16: { widthMul: 1.18, heightMul: 1.22 },
+      17: { widthMul: 1.18, heightMul: 1.22 },
+      18: { widthMul: 1.18, heightMul: 1.22 },
+      19: { widthMul: 1.18, heightMul: 1.22 },
+      20: { widthMul: 1.18, heightMul: 1.22 },
+      21: { widthMul: 1.18, heightMul: 1.22 },
+      22: { widthMul: 1.18, heightMul: 1.22 },
+      23: { widthMul: 1.18, heightMul: 1.22 },
+      24: { widthMul: 1.55, heightMul: 1.35, yNudge: -0.05 }
+    }
+  }
+};
+
+const imageCache = new Map();
+const composeCache = new Map();
+
+function loadImage(src) {
+  if (imageCache.has(src)) return imageCache.get(src);
+  const promise = new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error(`Could not load ${src}`));
+    img.src = src;
+  });
+  imageCache.set(src, promise);
+  return promise;
+}
+
+async function composeOpenedScene(design, openedDays) {
+  const spec = OPEN_ART[design];
+  if (!spec || !openedDays?.length) return null;
+  const map = HOTSPOTS[design];
+  if (!map) return null;
+
+  const key = `${design}:${[...openedDays].sort((a, b) => a - b).join(",")}`;
+  if (composeCache.has(key)) return composeCache.get(key);
+
+  const [closed, open] = await Promise.all([loadImage(spec.closed), loadImage(spec.open)]);
+  const canvas = document.createElement("canvas");
+  canvas.width = closed.naturalWidth || closed.width;
+  canvas.height = closed.naturalHeight || closed.height;
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(closed, 0, 0, canvas.width, canvas.height);
+
+  for (const day of openedDays) {
+    const box = map[day];
+    if (!box) continue;
+    const daySpec = (spec.byDay && spec.byDay[day]) || {};
+    const widthMul = daySpec.widthMul ?? spec.widthMul ?? 1.2;
+    const heightMul = daySpec.heightMul ?? spec.heightMul ?? 1.2;
+    const yNudge = daySpec.yNudge ?? spec.yNudge ?? 0;
+    const gw = (box.w / 100) * canvas.width;
+    const gh = (box.h / 100) * canvas.height;
+    const cx = (box.left / 100) * canvas.width + gw / 2;
+    const cy = (box.top / 100) * canvas.height + gh / 2;
+    const w = gw * widthMul;
+    const h = gh * heightMul;
+    const x = cx - w / 2;
+    const y = cy - h / 2 - gh * yNudge;
+    ctx.drawImage(open, x, y, w, h, x, y, w, h);
+  }
+  const url = canvas.toDataURL("image/jpeg", 0.92);
+  composeCache.set(key, url);
+  return url;
+}
+
+async function applyOpenedSceneArt() {
+  const img = document.querySelector(".scene-art[data-compose]");
+  if (!img) return;
+  const design = img.dataset.compose;
+  const opened = (img.dataset.opened || "")
+    .split(",")
+    .map(Number)
+    .filter((n) => n >= 1 && n <= 24);
+  const baseSrc = DESIGN_ART[design] || img.getAttribute("src");
+  if (!opened.length) {
+    img.src = baseSrc;
+    return;
+  }
+  try {
+    const url = await composeOpenedScene(design, opened);
+    if (url) img.src = url;
+  } catch {
+    img.src = baseSrc;
+  }
+}
 
 /** Percent boxes: { left, top, w, h } — aligned to numbered objects on each design image. */
 const HOTSPOTS = {
@@ -97,32 +210,6 @@ const HOTSPOTS = {
     22: { left: 57.4, top: 81.4, w: 4.2, h: 6.2 },
     23: { left: 64.9, top: 81.4, w: 4.4, h: 6.2 },
     24: { left: 72.3, top: 81.4, w: 4.4, h: 6.2 }
-  },
-  surprise: {
-    1: { left: 43.9, top: 27.6, w: 5.2, h: 6.8 },
-    2: { left: 51.4, top: 27.6, w: 5.2, h: 6.8 },
-    3: { left: 45.9, top: 38.1, w: 5.2, h: 6.8 },
-    4: { left: 39.4, top: 38.6, w: 5.2, h: 6.8 },
-    5: { left: 37.4, top: 44.6, w: 5.2, h: 6.8 },
-    6: { left: 49.9, top: 47.1, w: 5.2, h: 6.8 },
-    7: { left: 41.9, top: 48.6, w: 5.2, h: 6.8 },
-    8: { left: 54.4, top: 37.6, w: 5.2, h: 6.8 },
-    9: { left: 57.9, top: 49.1, w: 5.2, h: 6.8 },
-    10: { left: 33.4, top: 54.1, w: 5.2, h: 6.8 },
-    11: { left: 54.9, top: 67.1, w: 5.2, h: 6.8 },
-    12: { left: 31.4, top: 63.6, w: 5.2, h: 6.8 },
-    13: { left: 39.4, top: 58.1, w: 5.2, h: 6.8 },
-    14: { left: 54.9, top: 57.1, w: 5.2, h: 6.8 },
-    15: { left: 61.4, top: 58.6, w: 5.2, h: 6.8 },
-    16: { left: 45.4, top: 66.1, w: 5.2, h: 6.8 },
-    17: { left: 29.4, top: 68.6, w: 5.2, h: 6.8 },
-    18: { left: 36.9, top: 68.1, w: 5.2, h: 6.8 },
-    19: { left: 62.9, top: 68.6, w: 5.2, h: 6.8 },
-    20: { left: 60.9, top: 76.1, w: 5.2, h: 6.8 },
-    21: { left: 33.4, top: 77.6, w: 5.2, h: 6.8 },
-    22: { left: 40.4, top: 79.6, w: 5.2, h: 6.8 },
-    23: { left: 53.9, top: 79.1, w: 5.2, h: 6.8 },
-    24: { left: 44.0, top: 87.0, w: 8.0, h: 9.0 }
   }
 };
 
@@ -150,17 +237,15 @@ function hotspotElement(door, openedDays, interactive, design) {
   const map = HOTSPOTS[design] || HOTSPOTS.elegant;
   const box = map[door.day] || { left: 50, top: 50, w: 6, h: 8 };
   const shape =
-    design === "surprise"
-      ? "is-bauble"
-      : design === "elegant"
-        ? "is-window"
-        : door.day <= 4
-          ? "is-sock"
-          : door.day === 24
-            ? "is-book"
-            : door.day >= 21
-              ? "is-gift"
-              : "is-plaque";
+    design === "elegant"
+      ? "is-window"
+      : door.day <= 4
+        ? "is-sock"
+        : door.day === 24
+          ? "is-book"
+          : door.day >= 21
+            ? "is-gift"
+            : "is-plaque";
   const classes = [
     "hotspot",
     shape,
@@ -184,10 +269,16 @@ function calendarSceneHtml(design, doors, openedDays, interactive, recipientName
   const spots = doors
     .map((door) => hotspotElement(door, openedDays, interactive, key))
     .join("");
+  const compose =
+    OPEN_ART[key] && openedDays.length
+      ? ` data-compose="${key}" data-opened="${openedDays.join(",")}"`
+      : OPEN_ART[key]
+        ? ` data-compose="${key}" data-opened=""`
+        : "";
 
   return `<section class="scene-frame image-scene image-${key}" aria-label="Advent calendar scene">
       <div class="scene-art-wrap">
-        <img class="scene-art" src="${art}" alt="" />
+        <img class="scene-art" src="${art}" alt=""${compose} />
         <div class="scene-title-overlay">
           <h2>${esc(possessiveName(recipientName))} Advent Calendar</h2>
         </div>
@@ -284,6 +375,7 @@ function render() {
   applyDesign(design);
   app.innerHTML = id ? recipientHtml() : creatorHtml();
   document.querySelector("#keep-closed, #close-wish")?.focus();
+  applyOpenedSceneArt();
 }
 
 function creatorHtml() {

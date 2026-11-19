@@ -10,7 +10,7 @@ import pg from "pg";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_FILE = path.join(__dirname, "data", "calendars.json");
 const PORT = Number(process.env.PORT) || 3000;
-const DESIGNS = new Set(["festive", "elegant", "surprise", "beige"]);
+const DESIGNS = new Set(["festive", "elegant", "beige"]);
 const PUBLIC_DIR = path.join(__dirname, "public");
 
 function nowDate() {
