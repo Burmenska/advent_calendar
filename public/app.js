@@ -8,8 +8,8 @@ const PAGE_COPY = {
   title: "A little Christmas magic made for someone special.",
   intro:
     "Choose a design, add your names, and share 24 wishes for December with those you care about.",
-  recipientLabel: "For",
-  senderLabel: "From",
+  recipientLabel: "For:",
+  senderLabel: "From:",
   designsLabel: "Design",
   previewButton: "Preview calendar",
   backButton: "Back",
@@ -274,7 +274,14 @@ function statusLine(calendar) {
 
 function render() {
   const id = calendarId();
-  applyDesign(id ? state.calendar?.design : state.preview ? state.design : "");
+  const design = id
+    ? state.calendar?.design
+    : state.link
+      ? ""
+      : state.preview
+        ? state.design
+        : "";
+  applyDesign(design);
   app.innerHTML = id ? recipientHtml() : creatorHtml();
   document.querySelector("#keep-closed, #close-wish")?.focus();
 }
@@ -340,23 +347,25 @@ function previewHtml() {
 }
 
 function linkHtml() {
-  return `<header>
-      <p class="eyebrow">Ready to send</p>
-      <h1>${esc(possessiveName(state.recipientName))} Advent Calendar is ready.</h1>
-      <p class="lede">Send it however you like. ${esc(state.recipientName)} enters an email on the page so opened days are remembered on this calendar. Nothing is emailed from here.</p>
-    </header>
-    <div class="panel">
-      <label>Unique link
+  return `<div class="share-page">
+      <header class="share-head">
+        <p class="eyebrow">Ready to send</p>
+        <h1>${esc(possessiveName(state.recipientName))} calendar is ready</h1>
+        <p class="lede">Copy the link and send it your way. ${esc(state.recipientName)} opens it, adds an email, and the days stay remembered here.</p>
+      </header>
+      <div class="panel share-card">
+        <p class="share-label">Their unique link</p>
         <div class="link-row">
-          <input id="share-link" type="text" readonly value="${esc(state.link)}" />
+          <input id="share-link" type="text" readonly value="${esc(state.link)}" aria-label="Share link" />
           <button class="btn" id="copy" type="button">${state.copied ? "Copied" : "Copy link"}</button>
         </div>
-      </label>
-      <p class="fine">Days follow Central European time. Between 1 and 24 December, that day's spot is brighter. After the 24th the calendar stays open, without a highlighted day.</p>
-      <div class="actions">
-        <a class="btn" href="${esc(state.link)}">Open their calendar</a>
-        <button class="btn secondary" id="another" type="button">Make another</button>
+        <div class="actions share-actions">
+          <a class="btn" href="${esc(state.link)}">Open their calendar</a>
+          <button class="btn secondary" id="another" type="button">Make another</button>
+        </div>
+        <p class="fine">Days follow Central European time. Nothing is emailed from here.</p>
       </div>
+      <p class="page-from-footer">with love from ${esc(state.fromName)}</p>
     </div>`;
 }
 
@@ -383,20 +392,23 @@ function recipientHtml() {
 
 function emailGateHtml() {
   const calendar = state.calendar;
-  return `<header>
-      <p class="eyebrow">A calendar for ${esc(calendar.recipientName)}</p>
-      <h1>${esc(possessiveName(calendar.recipientName))} Advent Calendar</h1>
-      <p class="lede">with love from ${esc(calendar.fromName)}. Add your email before the days open. It is how this calendar remembers which ones you have already opened. There is no password, and nothing is sent to you.</p>
-    </header>
-    <form class="panel" id="email-form">
-      <label>Your email
-        <input name="email" type="email" required autocomplete="email" placeholder="you@example.com" />
-      </label>
-      ${state.error ? `<p class="error">${esc(state.error)}</p>` : ""}
-      <div class="actions">
-        <button class="btn" type="submit" ${state.busy ? "disabled" : ""}>Show my calendar</button>
-      </div>
-    </form>`;
+  return `<div class="gate-page">
+      <header class="gate-head">
+        <p class="eyebrow">A calendar for ${esc(calendar.recipientName)}</p>
+        <h1>${esc(possessiveName(calendar.recipientName))} Advent Calendar</h1>
+        <p class="lede">Add your email so opened days are remembered on this calendar. There is no password, and nothing is sent to you.</p>
+      </header>
+      <form class="panel gate-card" id="email-form">
+        <label>Your email
+          <input name="email" type="email" required autocomplete="email" placeholder="you@example.com" />
+        </label>
+        ${state.error ? `<p class="error">${esc(state.error)}</p>` : ""}
+        <div class="actions">
+          <button class="btn" type="submit" ${state.busy ? "disabled" : ""}>Show my calendar</button>
+        </div>
+      </form>
+      <p class="page-from-footer">with love from ${esc(calendar.fromName)}</p>
+    </div>`;
 }
 
 function confirmHtml(day) {
@@ -418,7 +430,6 @@ function wishHtml(wish) {
         <div class="scene" aria-hidden="true">${sceneHtml(wish.day)}</div>
         <p class="eyebrow">Day ${wish.day}</p>
         <p class="wish" id="wish-title">${esc(wish.wish)}</p>
-        <p class="from-line">with love from ${esc(wish.fromName)}</p>
         <div class="actions"><button class="btn" id="close-wish" type="button">Close</button></div>
       </div>
     </div>`;
@@ -593,10 +604,6 @@ document.addEventListener("keydown", (event) => {
   else return;
   render();
 });
-
-if (new URLSearchParams(location.search).has("debugHotspots")) {
-  document.body.classList.add("debug-hotspots");
-}
 
 if (calendarId()) loadRecipient();
 else render();

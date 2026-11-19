@@ -450,14 +450,18 @@ body:not([data-design])::before {
 }
 
 .create-head h1 {
-  max-width: 16ch;
-  line-height: 1.05;
+  max-width: 24ch;
+  font-size: clamp(1.55rem, 3.1vw, 2.35rem);
+  line-height: 1.12;
   color: #fff4dd;
   text-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+  text-wrap: balance;
 }
 
 .create-head .lede {
-  max-width: 34rem;
+  max-width: min(100%, 56rem);
+  font-size: clamp(0.92rem, 1.35vw, 1.02rem);
+  white-space: nowrap;
   color: #d7c4b0;
 }
 
@@ -474,6 +478,107 @@ body:not([data-design])::before {
     0 24px 60px rgba(0, 0, 0, 0.28),
     inset 0 0 0 1px rgba(232, 191, 112, 0.08);
   backdrop-filter: blur(10px);
+}
+
+/* Ready to send */
+.share-page,
+.gate-page {
+  position: relative;
+  min-height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-bottom: 48px;
+}
+
+.share-head,
+.gate-head {
+  max-width: 34rem;
+}
+
+.share-head .eyebrow,
+.gate-head .eyebrow {
+  color: #e8bf70;
+}
+
+.share-head h1,
+.gate-head h1 {
+  max-width: 18ch;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  line-height: 1.02;
+  color: #fff4dd;
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+  text-wrap: balance;
+}
+
+.share-head .lede,
+.gate-head .lede {
+  max-width: 34rem;
+  color: #d7c4b0;
+  white-space: normal;
+}
+
+.share-card,
+.gate-card {
+  max-width: 34rem;
+  margin-top: 22px;
+  padding: 26px 28px;
+  border: 1px solid rgba(255, 244, 221, 0.16);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 28%),
+    rgba(22, 16, 20, 0.78);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.28),
+    inset 0 0 0 1px rgba(232, 191, 112, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.share-label {
+  margin: 0 0 4px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #fff4dd;
+}
+
+.share-card .link-row {
+  margin-top: 8px;
+}
+
+.share-card .link-row input,
+.gate-card input {
+  background: rgba(255, 244, 221, 0.08);
+  border-color: rgba(255, 244, 221, 0.18);
+  color: #fff4dd;
+}
+
+.share-actions {
+  margin-top: 16px;
+}
+
+.share-card .fine,
+.gate-card .fine {
+  color: #b8a898;
+}
+
+.share-card .btn.secondary,
+.gate-card .btn.secondary {
+  border-color: rgba(255, 244, 221, 0.22);
+  color: #fff4dd;
+}
+
+body:is([data-design="festive"], [data-design="elegant"], [data-design="surprise"]) .gate-head h1 {
+  color: #fff4dd;
+}
+
+body:is([data-design="festive"], [data-design="elegant"], [data-design="surprise"]) .gate-head .lede {
+  color: rgba(255, 244, 221, 0.78);
+}
+
+body:is([data-design="festive"], [data-design="elegant"], [data-design="surprise"]) .gate-card {
+  border-color: rgba(255, 244, 221, 0.14);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 30%),
+    rgba(18, 14, 18, 0.72);
 }
 
 body:not([data-design]) input[type="text"],
@@ -1622,7 +1727,11 @@ body[data-design="elegant"] .decor-star {
   }
 
   .create-head h1 {
-    max-width: none;
+    max-width: 24ch;
+  }
+
+  .create-head .lede {
+    white-space: normal;
   }
 
   .design-grid {
@@ -2132,26 +2241,7 @@ body[data-design="elegant"] .decor-star {
   width: 100%;
   height: 180px;
   object-fit: cover;
-  /* Crop past any leftover baked-in title band */
-  object-position: center 62%;
-}
-
-/* Fully hide baked-in titles on all three design cards */
-.mini-photo::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 42%;
-  background: linear-gradient(
-    180deg,
-    #120e0c 0%,
-    #120e0c 70%,
-    rgba(18, 14, 12, 0) 100%
-  );
-  pointer-events: none;
-  z-index: 1;
+  object-position: center 48%;
 }
 
 .calendar-head-slim {
@@ -2197,8 +2287,7 @@ body[data-design="elegant"] .decor-star {
 }
 
 .preview-page .scene-from-footer {
-  font-size: 0.86rem;
-  padding-bottom: 10px;
+  font-size: 0.82rem;
 }
 
 .preview-page .actions {
@@ -2253,17 +2342,16 @@ body[data-design="elegant"] .decor-star {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* Fully cover any baked-in placeholder title in the scene art */
+  /* Soft readability shade for dynamic title only — art itself has no baked title */
   background: linear-gradient(
     180deg,
-    rgba(10, 14, 22, 0.94) 0%,
-    rgba(10, 14, 22, 0.86) 55%,
-    rgba(10, 14, 22, 0.35) 82%,
+    rgba(10, 14, 22, 0.45) 0%,
+    rgba(10, 14, 22, 0.22) 55%,
     rgba(10, 14, 22, 0) 100%
   );
   border: 0;
   box-shadow: none;
-  backdrop-filter: blur(4px);
+  backdrop-filter: none;
   pointer-events: none;
 }
 
@@ -2279,26 +2367,34 @@ body[data-design="elegant"] .decor-star {
   text-wrap: balance;
 }
 
-.scene-from-footer {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 2;
+.scene-from-footer,
+.page-from-footer {
   margin: 0;
-  padding: 28px 16px 14px;
-  text-align: center;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-style: italic;
   color: #e8bf70;
   line-height: 1.2;
   pointer-events: none;
-  background: linear-gradient(
-    0deg,
-    rgba(10, 14, 22, 0.78) 0%,
-    rgba(10, 14, 22, 0.35) 55%,
-    rgba(10, 14, 22, 0) 100%
-  );
+  text-shadow: 0 1px 8px rgba(10, 14, 22, 0.75);
+}
+
+.scene-from-footer {
+  position: absolute;
+  left: 14px;
+  right: auto;
+  bottom: 10px;
+  z-index: 2;
+  text-align: left;
+  background: none;
+  max-width: 52%;
+}
+
+.page-from-footer {
+  position: fixed;
+  left: max(16px, calc(50% - 490px + 16px));
+  bottom: 18px;
+  z-index: 5;
+  text-align: left;
 }
 
 .hotspot-layer {
@@ -2321,18 +2417,6 @@ body[data-design="elegant"] .decor-star {
   padding: 0;
   cursor: pointer;
   border-radius: 10px;
-}
-
-/* Temporary alignment check: ?debugHotspots=1 */
-body.debug-hotspots .hotspot {
-  border-color: rgba(0, 255, 90, 0.95);
-  background: rgba(0, 255, 90, 0.12);
-  color: #ffe600;
-}
-body.debug-hotspots .hotspot .num {
-  opacity: 1;
-  font-size: 0.7rem;
-  font-weight: 700;
 }
 
 .hotspot.is-window {
@@ -2385,28 +2469,28 @@ body.debug-hotspots .hotspot .num {
 }
 
 .hotspot.is-today {
-  border-color: rgba(232, 191, 112, 0.45);
-  box-shadow: 0 0 0 1px rgba(232, 191, 112, 0.18), 0 0 14px rgba(232, 191, 112, 0.22);
+  border-color: rgba(232, 191, 112, 0.14);
+  box-shadow: none;
   z-index: 4;
 }
 
 .hotspot:focus-visible {
-  outline: 2px solid rgba(232, 191, 112, 0.55);
-  outline-offset: 2px;
+  outline: 1px solid rgba(232, 191, 112, 0.35);
+  outline-offset: 1px;
 }
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .hotspot {
     transition:
-      border-color 480ms ease,
-      box-shadow 520ms ease,
-      background 480ms ease;
+      border-color 520ms ease,
+      box-shadow 560ms ease,
+      background 520ms ease;
   }
 
   .hotspot:hover {
-    border-color: rgba(232, 191, 112, 0.42);
-    background: rgba(232, 191, 112, 0.06);
-    box-shadow: 0 0 12px rgba(232, 191, 112, 0.16);
+    border-color: rgba(232, 191, 112, 0.16);
+    background: rgba(232, 191, 112, 0.03);
+    box-shadow: none;
     z-index: 5;
   }
 }
@@ -2422,8 +2506,16 @@ body.debug-hotspots .hotspot .num {
   }
 
   .scene-from-footer {
-    font-size: 0.86rem;
-    padding: 22px 12px 12px;
+    font-size: 0.8rem;
+    left: 10px;
+    bottom: 8px;
+    max-width: 58%;
+  }
+
+  .page-from-footer {
+    left: 16px;
+    bottom: 14px;
+    font-size: 0.82rem;
   }
 
   .hotspot .state {
