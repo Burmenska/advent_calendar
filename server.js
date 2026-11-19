@@ -10,7 +10,7 @@ import pg from "pg";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_FILE = path.join(__dirname, "data", "calendars.json");
 const PORT = Number(process.env.PORT) || 3000;
-const DESIGNS = new Set(["festive", "beige"]);
+const DESIGNS = new Set(["festive", "elegant", "surprise", "beige"]);
 const PUBLIC_DIR = path.join(__dirname, "public");
 
 function nowDate() {
@@ -285,7 +285,11 @@ const TYPES = {
   ".css": "text/css; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
   ".svg": "image/svg+xml",
-  ".ico": "image/x-icon"
+  ".ico": "image/x-icon",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".png": "image/png",
+  ".webp": "image/webp"
 };
 
 async function serveStatic(res, pathname) {
@@ -306,7 +310,7 @@ async function serveStatic(res, pathname) {
     send(res, 404, { error: "Not found" });
   }
 }
-const server = http.createServer(async (req, res) => {
+async function requestHandler(req, res) {
   try {
     const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
     if (url.pathname.startsWith("/api/")) {
@@ -324,8 +328,13 @@ const server = http.createServer(async (req, res) => {
       error: error.status ? error.message : "Something went wrong."
     });
   }
-});
+}
 
-server.listen(PORT, () => {
-  console.log(`Advent calendar running at http://localhost:${PORT}`);
-});
+export default requestHandler;
+
+if (!process.env.VERCEL) {
+  const server = http.createServer(requestHandler);
+  server.listen(PORT, () => {
+    console.log(`Advent calendar running at http://localhost:${PORT}`);
+  });
+}

@@ -54,7 +54,7 @@ export const WISHES = [
   "Wishing you a December full of your favourite things.",
   "Take a different route today. You might find something lovely.",
   "What's the nicest surprise you had this year?",
-  "Make yourself something warm and enjoy a song from start to finish."
+  "Make yourself something warm and enjoy a song from start to finish.",
   "Wishing you unplanned joy, the kind you don't have to dress up for.",
   "May you feel at home somewhere this December.",
   "Hope the season gives you back more than it asks.",

@@ -1,18 +1,206 @@
 const app = document.querySelector("#app");
-const DESIGNS = [
-  {
-    id: "festive",
-    name: "Festive",
-    copy: "Red evening, gold light, a little wooden door.",
-    colors: ["#9c2f2f", "#1d1412", "#f0c36a"]
+
+/* ============================================
+   EDIT MAIN PAGE TEXTS HERE
+   ============================================ */
+const PAGE_COPY = {
+  eyebrow: "A small December gift",
+  title: "A little Christmas magic, made for someone.",
+  intro: "Choose a design, add your names, and hide 24 wishes for December.",
+  recipientLabel: "Their name",
+  senderLabel: "From whom",
+  designsLabel: "Design",
+  previewButton: "Preview calendar",
+  backButton: "Back",
+  designs: [
+    {
+      id: "festive",
+      name: "Christmas Magic",
+      copy: "A cozy cabin fireplace, with advent spots on stockings, walls, and books."
+    },
+    {
+      id: "elegant",
+      name: "Winter Elegance",
+      copy: "A decorated snowy house, with glowing windows for each December day."
+    },
+    {
+      id: "surprise",
+      name: "Christmas Surprise",
+      copy: "A colourful Christmas tree, with numbered baubles to open."
+    }
+  ]
+};
+/* ============================================ */
+
+const DESIGNS = PAGE_COPY.designs;
+
+const DESIGN_ART = {
+  festive: "/designs/festive.jpg",
+  elegant: "/designs/elegant.jpg",
+  surprise: "/designs/surprise.jpg",
+  beige: "/designs/elegant.jpg",
+  main: "/designs/main-bg.jpg"
+};
+
+/** Percent boxes: { left, top, w, h } — aligned to numbered objects on each design image. */
+const HOTSPOTS = {
+  festive: {
+    1: { left: 61.9, top: 35.8, w: 7.2, h: 16.5 },
+    2: { left: 70.4, top: 35.2, w: 7.2, h: 16.5 },
+    3: { left: 78.9, top: 34.8, w: 7.2, h: 16.5 },
+    4: { left: 86.9, top: 34.8, w: 7.2, h: 16.5 },
+    5: { left: 25.3, top: 18.6, w: 7.4, h: 8.8 },
+    6: { left: 33.8, top: 19.1, w: 7.4, h: 8.8 },
+    7: { left: 42.3, top: 20.1, w: 7.4, h: 8.8 },
+    8: { left: 25.8, top: 31.1, w: 7.4, h: 8.8 },
+    9: { left: 33.8, top: 32.1, w: 7.4, h: 8.8 },
+    10: { left: 42.3, top: 32.6, w: 7.4, h: 8.8 },
+    11: { left: 50.9, top: 20.9, w: 7.2, h: 9.2 },
+    12: { left: 70.9, top: 15.4, w: 8.2, h: 9.2 },
+    13: { left: 50.9, top: 33.9, w: 7.2, h: 9.2 },
+    14: { left: 88.8, top: 15.4, w: 7.5, h: 9.2 },
+    15: { left: 29.0, top: 78.0, w: 9.0, h: 11.0 },
+    16: { left: 50.9, top: 46.9, w: 7.2, h: 9.2 },
+    17: { left: 25.5, top: 44.6, w: 6.0, h: 7.8 },
+    18: { left: 32.0, top: 44.6, w: 6.0, h: 7.8 },
+    19: { left: 38.5, top: 44.6, w: 6.0, h: 7.8 },
+    20: { left: 45.0, top: 44.6, w: 6.0, h: 7.8 },
+    21: { left: 49.5, top: 69.5, w: 8.0, h: 10.0 },
+    22: { left: 58.4, top: 70.2, w: 8.2, h: 10.5 },
+    23: { left: 66.4, top: 72.8, w: 8.2, h: 10.5 },
+    24: { left: 43.0, top: 75.5, w: 10.0, h: 11.0 }
   },
-  {
-    id: "beige",
-    name: "Beige fashion",
-    copy: "Stone, ivory, and a quiet editorial grid.",
-    colors: ["#fbf7f2", "#b08968", "#221e1a"]
+  elegant: {
+    1: { left: 25.3, top: 39.3, w: 7.0, h: 9.0 },
+    2: { left: 33.3, top: 39.3, w: 7.0, h: 9.0 },
+    3: { left: 40.5, top: 39.3, w: 7.0, h: 9.0 },
+    4: { left: 57.5, top: 39.3, w: 7.0, h: 9.0 },
+    5: { left: 65.0, top: 39.3, w: 7.0, h: 9.0 },
+    6: { left: 72.5, top: 39.3, w: 7.0, h: 9.0 },
+    7: { left: 25.3, top: 53.3, w: 7.0, h: 9.0 },
+    8: { left: 33.3, top: 53.3, w: 7.0, h: 9.0 },
+    9: { left: 40.5, top: 53.3, w: 7.0, h: 9.0 },
+    10: { left: 57.5, top: 53.3, w: 7.0, h: 9.0 },
+    11: { left: 65.0, top: 53.3, w: 7.0, h: 9.0 },
+    12: { left: 72.5, top: 53.3, w: 7.0, h: 9.0 },
+    13: { left: 25.3, top: 67.3, w: 7.0, h: 9.0 },
+    14: { left: 33.3, top: 67.3, w: 7.0, h: 9.0 },
+    15: { left: 40.5, top: 67.3, w: 7.0, h: 9.0 },
+    16: { left: 57.5, top: 67.3, w: 7.0, h: 9.0 },
+    17: { left: 65.0, top: 67.3, w: 7.0, h: 9.0 },
+    18: { left: 72.5, top: 67.3, w: 7.0, h: 9.0 },
+    19: { left: 25.3, top: 80.7, w: 7.0, h: 9.0 },
+    20: { left: 33.3, top: 80.7, w: 7.0, h: 9.0 },
+    21: { left: 40.5, top: 80.7, w: 7.0, h: 9.0 },
+    22: { left: 57.5, top: 80.7, w: 7.0, h: 9.0 },
+    23: { left: 65.0, top: 80.7, w: 7.0, h: 9.0 },
+    24: { left: 72.5, top: 80.7, w: 7.0, h: 9.0 }
+  },
+  surprise: {
+    1: { left: 43.9, top: 27.6, w: 5.2, h: 6.8 },
+    2: { left: 51.4, top: 27.6, w: 5.2, h: 6.8 },
+    3: { left: 45.9, top: 38.1, w: 5.2, h: 6.8 },
+    4: { left: 39.4, top: 38.6, w: 5.2, h: 6.8 },
+    5: { left: 37.4, top: 44.6, w: 5.2, h: 6.8 },
+    6: { left: 49.9, top: 47.1, w: 5.2, h: 6.8 },
+    7: { left: 41.9, top: 48.6, w: 5.2, h: 6.8 },
+    8: { left: 54.4, top: 37.6, w: 5.2, h: 6.8 },
+    9: { left: 57.9, top: 49.1, w: 5.2, h: 6.8 },
+    10: { left: 33.4, top: 54.1, w: 5.2, h: 6.8 },
+    11: { left: 54.9, top: 67.1, w: 5.2, h: 6.8 },
+    12: { left: 31.4, top: 63.6, w: 5.2, h: 6.8 },
+    13: { left: 39.4, top: 58.1, w: 5.2, h: 6.8 },
+    14: { left: 54.9, top: 57.1, w: 5.2, h: 6.8 },
+    15: { left: 61.4, top: 58.6, w: 5.2, h: 6.8 },
+    16: { left: 45.4, top: 66.1, w: 5.2, h: 6.8 },
+    17: { left: 29.4, top: 68.6, w: 5.2, h: 6.8 },
+    18: { left: 36.9, top: 68.1, w: 5.2, h: 6.8 },
+    19: { left: 62.9, top: 68.6, w: 5.2, h: 6.8 },
+    20: { left: 60.9, top: 76.1, w: 5.2, h: 6.8 },
+    21: { left: 33.4, top: 77.6, w: 5.2, h: 6.8 },
+    22: { left: 40.4, top: 79.6, w: 5.2, h: 6.8 },
+    23: { left: 53.9, top: 79.1, w: 5.2, h: 6.8 },
+    24: { left: 44.0, top: 87.0, w: 8.0, h: 9.0 }
   }
-];
+};
+
+function possessiveName(name) {
+  const value = String(name ?? "").trim() || "Name";
+  return /s$/i.test(value) ? `${value}'` : `${value}'s`;
+}
+
+function designPreviewHtml(designId) {
+  const src = DESIGN_ART[designId] || DESIGN_ART.festive;
+  return `<span class="mini-calendar mini-photo" aria-hidden="true">
+      <img class="mini-photo-img" src="${src}" alt="" />
+    </span>`;
+}
+
+function doorLabel(door, opened) {
+  if (opened) return "Opened";
+  if (door.phase === "today") return "Today";
+  if (door.phase === "past") return "Open";
+  return "Closed";
+}
+
+function hotspotElement(door, openedDays, interactive, design) {
+  const opened = openedDays.includes(door.day);
+  const map = HOTSPOTS[design] || HOTSPOTS.elegant;
+  const box = map[door.day] || { left: 50, top: 50, w: 6, h: 8 };
+  const shape =
+    design === "surprise"
+      ? "is-bauble"
+      : design === "elegant"
+        ? "is-window"
+        : door.day <= 4
+          ? "is-sock"
+          : door.day === 24
+            ? "is-book"
+            : door.day >= 21
+              ? "is-gift"
+              : "is-plaque";
+  const classes = [
+    "hotspot",
+    shape,
+    opened ? "is-open" : "",
+    door.phase === "today" ? "is-today" : ""
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const label = doorLabel(door, opened);
+  const style = `left:${box.left}%;top:${box.top}%;width:${box.w}%;height:${box.h}%`;
+  const inner = `<span class="num">${door.day}</span><span class="state">${label}</span>`;
+  if (!interactive) {
+    return `<div class="${classes}" style="${style}" data-day="${door.day}">${inner}</div>`;
+  }
+  return `<button class="${classes}" style="${style}" type="button" data-day="${door.day}" aria-label="Day ${door.day}, ${label}">${inner}</button>`;
+}
+
+function calendarSceneHtml(design, doors, openedDays, interactive, recipientName, fromName) {
+  const art = DESIGN_ART[design] || DESIGN_ART.festive;
+  const key = HOTSPOTS[design] ? design : "elegant";
+  const spots = doors
+    .map((door) => hotspotElement(door, openedDays, interactive, key))
+    .join("");
+
+  return `<section class="scene-frame image-scene image-${key}" aria-label="Advent calendar scene">
+      <div class="scene-art-wrap">
+        <img class="scene-art" src="${art}" alt="" />
+        <div class="scene-title-overlay">
+          <h2>${esc(possessiveName(recipientName))} Advent Calendar</h2>
+          <p class="scene-title-from">with love from ${esc(fromName)}</p>
+        </div>
+        <div class="hotspot-layer">${spots}</div>
+      </div>
+    </section>`;
+}
+
+function calendarHeadingHtml({ note, eyebrow }) {
+  return `<header class="calendar-head calendar-head-slim">
+      ${eyebrow ? `<p class="eyebrow">${esc(eyebrow)}</p>` : ""}
+      <p class="note">${esc(note)}</p>
+    </header>`;
+}
 
 const state = {
   recipientName: "",
@@ -61,35 +249,6 @@ function applyDesign(design) {
   else delete document.body.dataset.design;
 }
 
-function doorLabel(door, opened) {
-  if (opened) return "Opened";
-  if (door.phase === "today") return "Today";
-  if (door.phase === "past") return "Open";
-  return "Sealed";
-}
-
-function doorsHtml(doors, openedDays, interactive) {
-  return doors
-    .map((door) => {
-      const opened = openedDays.includes(door.day);
-      const classes = [
-        "door",
-        opened ? "is-open" : "",
-        door.phase === "today" ? "is-today" : ""
-      ]
-        .filter(Boolean)
-        .join(" ");
-      const label = doorLabel(door, opened);
-      if (!interactive) {
-        return `<div class="${classes}"><span class="num">${door.day}</span><span class="knob"></span><span class="state">${label}</span></div>`;
-      }
-      return `<button class="${classes}" type="button" data-day="${door.day}" aria-label="Door ${door.day}, ${label}">
-        <span class="num">${door.day}</span><span class="knob"></span><span class="state">${label}</span>
-      </button>`;
-    })
-    .join("");
-}
-
 function sceneHtml(day) {
   const kind = day % 3;
   if (kind === 0) return `<div class="glow-orb"></div>`;
@@ -105,10 +264,10 @@ function sceneHtml(day) {
 }
 
 function statusLine(calendar) {
-  if (calendar.today) return `Door ${calendar.today} is today's. It stays brighter than the others.`;
+  if (calendar.today) return `Day ${calendar.today} is today's. It glows a little brighter.`;
   const future = calendar.doors.every((door) => door.phase === "future");
-  if (future) return "Nothing is highlighted yet. Each door lights up on its December day.";
-  return "December has passed, so no door is singled out. Every one can still be opened.";
+  if (future) return "Nothing is lit yet. Each day warms up on its December date.";
+  return "December has passed, so no day is singled out. Every one can still be opened.";
 }
 
 function render() {
@@ -121,61 +280,66 @@ function render() {
 function creatorHtml() {
   if (state.link) return linkHtml();
   if (state.preview) return previewHtml();
-  return `<header>
-      <p class="eyebrow">A small December gift</p>
-      <h1>Make a calendar for someone.</h1>
-      <p class="lede">Add their name, your name, and a design. They get one link. Each door hides a warm wish, and today's door stands out between 1 and 24 December.</p>
-    </header>
-    <form class="panel" id="create-form">
-      <div class="fields">
-        <label>Their name
-          <input name="recipientName" type="text" maxlength="40" required value="${esc(state.recipientName)}" autocomplete="off" />
-        </label>
-        <label>From whom
-          <input name="fromName" type="text" maxlength="40" required value="${esc(state.fromName)}" autocomplete="off" />
-        </label>
+  return `<div class="create-page">
+      <div class="create-hero" aria-hidden="true">
+        <img class="create-hero-img" src="${DESIGN_ART.main}" alt="" />
+        <div class="create-hero-shade"></div>
       </div>
-      <div class="designs">
-        <span>Design</span>
-        <div class="design-grid">
-          ${DESIGNS.map((design) => `<button type="button" class="design-card ${state.design === design.id ? "is-selected" : ""}" data-design="${design.id}">
-              <span class="swatch">${design.colors.map((color) => `<i style="background:${color}"></i>`).join("")}</span>
-              <strong>${design.name}</strong>
-              <span>${design.copy}</span>
-            </button>`).join("")}
+      <header class="create-head">
+        <p class="eyebrow">${esc(PAGE_COPY.eyebrow)}</p>
+        <h1>${esc(PAGE_COPY.title)}</h1>
+        <p class="lede">${esc(PAGE_COPY.intro)}</p>
+      </header>
+      <form class="panel create-panel" id="create-form">
+        <div class="fields">
+          <label>${esc(PAGE_COPY.recipientLabel)}
+            <input name="recipientName" type="text" maxlength="40" required value="${esc(state.recipientName)}" autocomplete="off" />
+          </label>
+          <label>${esc(PAGE_COPY.senderLabel)}
+            <input name="fromName" type="text" maxlength="40" required value="${esc(state.fromName)}" autocomplete="off" />
+          </label>
         </div>
-      </div>
-      ${state.error ? `<p class="error">${esc(state.error)}</p>` : ""}
-      <div class="actions">
-        <button class="btn" type="submit">Preview calendar</button>
-      </div>
-    </form>`;
+        <div class="designs">
+          <span class="designs-label">${esc(PAGE_COPY.designsLabel)}</span>
+          <div class="design-grid" role="group" aria-label="Calendar design">
+            ${DESIGNS.map((design) => {
+              const selected = state.design === design.id;
+              return `<button type="button" class="design-card ${selected ? "is-selected" : ""}" data-design="${design.id}" aria-pressed="${selected}">
+                ${designPreviewHtml(design.id)}
+                <strong>${design.name}</strong>
+                <span class="design-copy">${design.copy}</span>
+                ${selected ? `<span class="selected-label">Selected</span>` : ""}
+              </button>`;
+            }).join("")}
+          </div>
+        </div>
+        ${state.error ? `<p class="error">${esc(state.error)}</p>` : ""}
+        <div class="actions">
+          <button class="btn" type="submit">${esc(PAGE_COPY.previewButton)}</button>
+        </div>
+      </form>
+    </div>`;
 }
 
 function previewHtml() {
-  const doors = state.preview.doors;
-  return `<header class="calendar-head">
-      <div>
-        <p class="eyebrow">Preview for ${esc(state.recipientName)}</p>
-        <h1>${esc(state.recipientName)}</h1>
-        <p class="lede">From ${esc(state.fromName)}</p>
-      </div>
-      <p class="note">${esc(statusLine(state.preview))}</p>
-    </header>
-    <div class="grid">${doorsHtml(doors, [], false)}</div>
+  return `${calendarHeadingHtml({
+      eyebrow: "Preview",
+      note: statusLine(state.preview)
+    })}
+    ${calendarSceneHtml(state.design, state.preview.doors, [], false, state.recipientName, state.fromName)}
     <div class="actions">
       <button class="btn" id="create-link" type="button" ${state.busy ? "disabled" : ""}>Create link</button>
-      <button class="btn secondary" id="back" type="button">Edit details</button>
+      <button class="btn secondary" id="back" type="button">${esc(PAGE_COPY.backButton)}</button>
     </div>
     ${state.error ? `<p class="error">${esc(state.error)}</p>` : ""}
-    <p class="fine">The link is the gift. Copy it into a message, an email, or a chat. Wishes are chosen once and stay on these doors.</p>`;
+    <p class="fine">The link is the gift. Copy it into a message, an email, or a chat. Wishes are chosen once and stay on these days.</p>`;
 }
 
 function linkHtml() {
   return `<header>
       <p class="eyebrow">Ready to send</p>
-      <h1>Their calendar has a link.</h1>
-      <p class="lede">Send it however you like. ${esc(state.recipientName)} enters an email on the page so opened doors are remembered on this calendar. Nothing is emailed from here.</p>
+      <h1>${esc(possessiveName(state.recipientName))} Advent Calendar is ready.</h1>
+      <p class="lede">Send it however you like. ${esc(state.recipientName)} enters an email on the page so opened days are remembered on this calendar. Nothing is emailed from here.</p>
     </header>
     <div class="panel">
       <label>Unique link
@@ -184,7 +348,7 @@ function linkHtml() {
           <button class="btn" id="copy" type="button">${state.copied ? "Copied" : "Copy link"}</button>
         </div>
       </label>
-      <p class="fine">Days follow Central European time. Between 1 and 24 December, that day's door is brighter. After the 24th the calendar stays open, without a highlighted door.</p>
+      <p class="fine">Days follow Central European time. Between 1 and 24 December, that day's spot is brighter. After the 24th the calendar stays open, without a highlighted day.</p>
       <div class="actions">
         <a class="btn" href="${esc(state.link)}">Open their calendar</a>
         <button class="btn secondary" id="another" type="button">Make another</button>
@@ -197,16 +361,18 @@ function recipientHtml() {
     return `<header><h1>Opening…</h1>${state.error ? `<p class="error">${esc(state.error)}</p>` : ""}</header>`;
   }
   if (!state.email) return emailGateHtml();
-  return `<header class="calendar-head">
-      <div>
-        <p class="eyebrow">For ${esc(state.calendar.recipientName)}</p>
-        <h1>${esc(state.calendar.recipientName)}</h1>
-        <p class="lede">From ${esc(state.calendar.fromName)}</p>
-      </div>
-      <p class="note">${esc(statusLine(state.calendar))}</p>
-    </header>
-    <div class="grid">${doorsHtml(state.calendar.doors, state.openedDays, true)}</div>
-    <p class="fine">Opened doors are saved for ${esc(state.email)}. Days follow Central European time.</p>
+  return `${calendarHeadingHtml({
+      note: statusLine(state.calendar)
+    })}
+    ${calendarSceneHtml(
+      state.calendar.design,
+      state.calendar.doors,
+      state.openedDays,
+      true,
+      state.calendar.recipientName,
+      state.calendar.fromName
+    )}
+    <p class="fine">Opened days are saved for ${esc(state.email)}. Days follow Central European time.</p>
     ${state.confirmDay ? confirmHtml(state.confirmDay) : ""}
     ${state.wish ? wishHtml(state.wish) : ""}`;
 }
@@ -215,8 +381,8 @@ function emailGateHtml() {
   const calendar = state.calendar;
   return `<header>
       <p class="eyebrow">A calendar for ${esc(calendar.recipientName)}</p>
-      <h1>${esc(calendar.recipientName)}</h1>
-      <p class="lede">From ${esc(calendar.fromName)}. Add your email before the doors open. It is how this calendar remembers which ones you have already opened. There is no password, and nothing is sent to you.</p>
+      <h1>${esc(possessiveName(calendar.recipientName))} Advent Calendar</h1>
+      <p class="lede">with love from ${esc(calendar.fromName)}. Add your email before the days open. It is how this calendar remembers which ones you have already opened. There is no password, and nothing is sent to you.</p>
     </header>
     <form class="panel" id="email-form">
       <label>Your email
@@ -232,8 +398,8 @@ function emailGateHtml() {
 function confirmHtml(day) {
   return `<div class="overlay" id="confirm">
       <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
-        <h2 id="confirm-title">Open ${day} December early?</h2>
-        <p>This door is waiting for its own day. You can look now, or leave it closed.</p>
+        <h2 id="confirm-title">Open day ${day} early?</h2>
+        <p>This day is waiting for its own date. You can look now, or leave it closed.</p>
         <div class="actions">
           <button class="btn" id="keep-closed" type="button">Leave it closed</button>
           <button class="btn secondary" id="open-anyway" type="button">Open anyway</button>
@@ -246,9 +412,9 @@ function wishHtml(wish) {
   return `<div class="overlay" id="wish">
       <div class="modal" role="dialog" aria-modal="true" aria-labelledby="wish-title">
         <div class="scene" aria-hidden="true">${sceneHtml(wish.day)}</div>
-        <p class="eyebrow">Door ${wish.day}</p>
+        <p class="eyebrow">Day ${wish.day}</p>
         <p class="wish" id="wish-title">${esc(wish.wish)}</p>
-        <p class="from-line">From ${esc(wish.fromName)}</p>
+        <p class="from-line">with love from ${esc(wish.fromName)}</p>
         <div class="actions"><button class="btn" id="close-wish" type="button">Close</button></div>
       </div>
     </div>`;
@@ -313,7 +479,10 @@ async function openDoor(day, confirmEarly) {
 }
 
 document.body.addEventListener("click", async (event) => {
-  const design = event.target.closest("button[data-design]");
+  const el = event.target instanceof Element ? event.target : event.target.parentElement;
+  if (!el) return;
+
+  const design = el.closest("button[data-design]");
   if (design) {
     const form = document.querySelector("#create-form");
     if (form) {
@@ -325,17 +494,19 @@ document.body.addEventListener("click", async (event) => {
     render();
     return;
   }
-  if (event.target.id === "back") {
+  if (el.closest("#back")) {
     state.preview = null;
     render();
+    return;
   }
-  if (event.target.id === "another") {
+  if (el.closest("#another")) {
     state.link = "";
     state.preview = null;
     state.copied = false;
     render();
+    return;
   }
-  if (event.target.id === "create-link") {
+  if (el.closest("#create-link")) {
     state.busy = true;
     state.error = "";
     render();
@@ -355,8 +526,9 @@ document.body.addEventListener("click", async (event) => {
       state.busy = false;
       render();
     }
+    return;
   }
-  if (event.target.id === "copy") {
+  if (el.closest("#copy")) {
     const input = document.querySelector("#share-link");
     input.select();
     try {
@@ -366,15 +538,23 @@ document.body.addEventListener("click", async (event) => {
     }
     state.copied = true;
     render();
+    return;
   }
-  const door = event.target.closest("[data-day]");
-  if (door) openDoor(Number(door.dataset.day), false);
-  if (event.target.id === "keep-closed") {
+  const door = el.closest("button.hotspot[data-day], button[data-day]");
+  if (door) {
+    openDoor(Number(door.dataset.day), false);
+    return;
+  }
+  if (el.closest("#keep-closed")) {
     state.confirmDay = null;
     render();
+    return;
   }
-  if (event.target.id === "open-anyway") openDoor(state.confirmDay, true);
-  if (event.target.id === "close-wish" || event.target.id === "wish") {
+  if (el.closest("#open-anyway")) {
+    openDoor(state.confirmDay, true);
+    return;
+  }
+  if (el.closest("#close-wish") || el.id === "wish") {
     state.wish = null;
     render();
   }
@@ -409,6 +589,10 @@ document.addEventListener("keydown", (event) => {
   else return;
   render();
 });
+
+if (new URLSearchParams(location.search).has("debugHotspots")) {
+  document.body.classList.add("debug-hotspots");
+}
 
 if (calendarId()) loadRecipient();
 else render();
