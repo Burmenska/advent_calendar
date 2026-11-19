@@ -5,10 +5,11 @@ const app = document.querySelector("#app");
    ============================================ */
 const PAGE_COPY = {
   eyebrow: "A small December gift",
-  title: "A little Christmas magic, made for someone.",
-  intro: "Choose a design, add your names, and hide 24 wishes for December.",
-  recipientLabel: "Their name",
-  senderLabel: "From whom",
+  title: "A little Christmas magic made for someone special.",
+  intro:
+    "Choose a design, add your names, and share 24 wishes for December with those you care about.",
+  recipientLabel: "For",
+  senderLabel: "From",
   designsLabel: "Design",
   previewButton: "Preview calendar",
   backButton: "Back",
@@ -71,30 +72,31 @@ const HOTSPOTS = {
     24: { left: 43.0, top: 75.5, w: 10.0, h: 11.0 }
   },
   elegant: {
-    1: { left: 25.3, top: 39.3, w: 7.0, h: 9.0 },
-    2: { left: 33.3, top: 39.3, w: 7.0, h: 9.0 },
-    3: { left: 40.5, top: 39.3, w: 7.0, h: 9.0 },
-    4: { left: 57.5, top: 39.3, w: 7.0, h: 9.0 },
-    5: { left: 65.0, top: 39.3, w: 7.0, h: 9.0 },
-    6: { left: 72.5, top: 39.3, w: 7.0, h: 9.0 },
-    7: { left: 25.3, top: 53.3, w: 7.0, h: 9.0 },
-    8: { left: 33.3, top: 53.3, w: 7.0, h: 9.0 },
-    9: { left: 40.5, top: 53.3, w: 7.0, h: 9.0 },
-    10: { left: 57.5, top: 53.3, w: 7.0, h: 9.0 },
-    11: { left: 65.0, top: 53.3, w: 7.0, h: 9.0 },
-    12: { left: 72.5, top: 53.3, w: 7.0, h: 9.0 },
-    13: { left: 25.3, top: 67.3, w: 7.0, h: 9.0 },
-    14: { left: 33.3, top: 67.3, w: 7.0, h: 9.0 },
-    15: { left: 40.5, top: 67.3, w: 7.0, h: 9.0 },
-    16: { left: 57.5, top: 67.3, w: 7.0, h: 9.0 },
-    17: { left: 65.0, top: 67.3, w: 7.0, h: 9.0 },
-    18: { left: 72.5, top: 67.3, w: 7.0, h: 9.0 },
-    19: { left: 25.3, top: 80.7, w: 7.0, h: 9.0 },
-    20: { left: 33.3, top: 80.7, w: 7.0, h: 9.0 },
-    21: { left: 40.5, top: 80.7, w: 7.0, h: 9.0 },
-    22: { left: 57.5, top: 80.7, w: 7.0, h: 9.0 },
-    23: { left: 65.0, top: 80.7, w: 7.0, h: 9.0 },
-    24: { left: 72.5, top: 80.7, w: 7.0, h: 9.0 }
+    /* Pixel-fitted to each window's glowing glass pane */
+    1: { left: 24.2, top: 40.8, w: 5.2, h: 6.4 },
+    2: { left: 33.2, top: 41.2, w: 4.8, h: 6.4 },
+    3: { left: 41.4, top: 41.2, w: 4.6, h: 6.4 },
+    4: { left: 57.2, top: 41.6, w: 4.4, h: 6.4 },
+    5: { left: 64.5, top: 42.0, w: 4.6, h: 6.4 },
+    6: { left: 72.3, top: 42.4, w: 4.2, h: 6.4 },
+    7: { left: 24.6, top: 53.8, w: 5.0, h: 6.4 },
+    8: { left: 33.0, top: 54.0, w: 5.2, h: 6.4 },
+    9: { left: 41.6, top: 54.4, w: 4.8, h: 6.4 },
+    10: { left: 57.2, top: 54.6, w: 4.6, h: 6.4 },
+    11: { left: 64.8, top: 54.8, w: 4.4, h: 6.4 },
+    12: { left: 72.3, top: 55.0, w: 4.4, h: 6.4 },
+    13: { left: 24.4, top: 67.6, w: 5.2, h: 6.4 },
+    14: { left: 33.4, top: 67.6, w: 4.8, h: 6.4 },
+    15: { left: 41.6, top: 67.6, w: 4.4, h: 6.4 },
+    16: { left: 57.4, top: 67.8, w: 4.2, h: 6.4 },
+    17: { left: 64.8, top: 67.8, w: 4.4, h: 6.4 },
+    18: { left: 72.3, top: 67.8, w: 4.4, h: 6.4 },
+    19: { left: 25.0, top: 81.6, w: 4.8, h: 6.2 },
+    20: { left: 33.4, top: 81.6, w: 4.8, h: 6.2 },
+    21: { left: 41.6, top: 81.6, w: 4.4, h: 6.2 },
+    22: { left: 57.4, top: 81.4, w: 4.2, h: 6.2 },
+    23: { left: 64.9, top: 81.4, w: 4.4, h: 6.2 },
+    24: { left: 72.3, top: 81.4, w: 4.4, h: 6.2 }
   },
   surprise: {
     1: { left: 43.9, top: 27.6, w: 5.2, h: 6.8 },
@@ -188,8 +190,8 @@ function calendarSceneHtml(design, doors, openedDays, interactive, recipientName
         <img class="scene-art" src="${art}" alt="" />
         <div class="scene-title-overlay">
           <h2>${esc(possessiveName(recipientName))} Advent Calendar</h2>
-          <p class="scene-title-from">with love from ${esc(fromName)}</p>
         </div>
+        <p class="scene-from-footer">with love from ${esc(fromName)}</p>
         <div class="hotspot-layer">${spots}</div>
       </div>
     </section>`;
@@ -322,7 +324,8 @@ function creatorHtml() {
 }
 
 function previewHtml() {
-  return `${calendarHeadingHtml({
+  return `<div class="preview-page">
+    ${calendarHeadingHtml({
       eyebrow: "Preview",
       note: statusLine(state.preview)
     })}
@@ -332,7 +335,8 @@ function previewHtml() {
       <button class="btn secondary" id="back" type="button">${esc(PAGE_COPY.backButton)}</button>
     </div>
     ${state.error ? `<p class="error">${esc(state.error)}</p>` : ""}
-    <p class="fine">The link is the gift. Copy it into a message, an email, or a chat. Wishes are chosen once and stay on these days.</p>`;
+    <p class="fine">The link is the gift. Copy it into a message, an email, or a chat. Wishes are chosen once and stay on these days.</p>
+  </div>`;
 }
 
 function linkHtml() {

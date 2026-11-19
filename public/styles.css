@@ -2132,22 +2132,22 @@ body[data-design="elegant"] .decor-star {
   width: 100%;
   height: 180px;
   object-fit: cover;
-  /* Crop past baked-in titles (they sit at different heights per image) */
-  object-position: center 58%;
+  /* Crop past any leftover baked-in title band */
+  object-position: center 62%;
 }
 
-/* Fully hide baked-in titles (different heights per image) so previews match */
+/* Fully hide baked-in titles on all three design cards */
 .mini-photo::after {
   content: "";
   position: absolute;
   left: 0;
   right: 0;
   top: 0;
-  height: 38%;
+  height: 42%;
   background: linear-gradient(
     180deg,
     #120e0c 0%,
-    #120e0c 52%,
+    #120e0c 70%,
     rgba(18, 14, 12, 0) 100%
   );
   pointer-events: none;
@@ -2175,6 +2175,57 @@ body[data-design="elegant"] .decor-star {
   background: #120e0c;
 }
 
+/* Keep Create link / Back visible without scrolling */
+.preview-page .calendar-head-slim {
+  margin-bottom: 4px;
+}
+
+.preview-page .image-scene {
+  width: min(100%, 670px);
+  margin: 4px auto 10px;
+  border-radius: 18px;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.24);
+}
+
+.preview-page .scene-title-overlay {
+  min-height: 11%;
+  padding: 10px 14px 12px;
+}
+
+.preview-page .scene-title-overlay h2 {
+  font-size: clamp(1.05rem, 2.2vw, 1.45rem);
+}
+
+.preview-page .scene-from-footer {
+  font-size: 0.86rem;
+  padding-bottom: 10px;
+}
+
+.preview-page .actions {
+  margin-top: 8px;
+}
+
+.preview-page .fine {
+  margin-top: 8px;
+  font-size: 0.86rem;
+}
+
+@media (max-height: 860px) {
+  .preview-page .image-scene {
+    width: min(100%, 580px);
+  }
+}
+
+@media (max-height: 740px) {
+  .preview-page .image-scene {
+    width: min(100%, 480px);
+  }
+
+  .preview-page .fine {
+    display: none;
+  }
+}
+
 .scene-art-wrap {
   position: relative;
   width: 100%;
@@ -2194,18 +2245,25 @@ body[data-design="elegant"] .decor-star {
   top: 0;
   z-index: 2;
   width: 100%;
-  min-height: 14%;
-  padding: clamp(14px, 2.2vw, 22px) 20px clamp(16px, 2.4vw, 24px);
+  min-height: 15%;
+  padding: clamp(14px, 2.2vw, 22px) 20px clamp(18px, 2.6vw, 28px);
   border-radius: 0;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(180deg, rgba(10, 14, 22, 0.88) 0%, rgba(10, 14, 22, 0.72) 70%, rgba(10, 14, 22, 0));
+  /* Fully cover any baked-in placeholder title in the scene art */
+  background: linear-gradient(
+    180deg,
+    rgba(10, 14, 22, 0.94) 0%,
+    rgba(10, 14, 22, 0.86) 55%,
+    rgba(10, 14, 22, 0.35) 82%,
+    rgba(10, 14, 22, 0) 100%
+  );
   border: 0;
   box-shadow: none;
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(4px);
   pointer-events: none;
 }
 
@@ -2221,13 +2279,26 @@ body[data-design="elegant"] .decor-star {
   text-wrap: balance;
 }
 
-.scene-title-from {
-  margin: 8px 0 0;
-  width: min(90%, 640px);
+.scene-from-footer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  margin: 0;
+  padding: 28px 16px 14px;
+  text-align: center;
   font-size: 0.95rem;
   font-style: italic;
   color: #e8bf70;
   line-height: 1.2;
+  pointer-events: none;
+  background: linear-gradient(
+    0deg,
+    rgba(10, 14, 22, 0.78) 0%,
+    rgba(10, 14, 22, 0.35) 55%,
+    rgba(10, 14, 22, 0) 100%
+  );
 }
 
 .hotspot-layer {
@@ -2265,7 +2336,8 @@ body.debug-hotspots .hotspot .num {
 }
 
 .hotspot.is-window {
-  border-radius: 8px;
+  border-radius: 4px;
+  border-width: 1.5px;
 }
 
 .hotspot.is-bauble {
@@ -2313,25 +2385,28 @@ body.debug-hotspots .hotspot .num {
 }
 
 .hotspot.is-today {
-  border-color: #e8bf70;
-  box-shadow: 0 0 0 2px rgba(232, 191, 112, 0.4), 0 0 24px rgba(232, 191, 112, 0.55);
+  border-color: rgba(232, 191, 112, 0.45);
+  box-shadow: 0 0 0 1px rgba(232, 191, 112, 0.18), 0 0 14px rgba(232, 191, 112, 0.22);
   z-index: 4;
 }
 
 .hotspot:focus-visible {
-  outline: 3px solid #e8bf70;
-  outline-offset: 3px;
+  outline: 2px solid rgba(232, 191, 112, 0.55);
+  outline-offset: 2px;
 }
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .hotspot {
-    transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    transition:
+      border-color 480ms ease,
+      box-shadow 520ms ease,
+      background 480ms ease;
   }
 
   .hotspot:hover {
-    border-color: rgba(232, 191, 112, 0.9);
-    background: rgba(232, 191, 112, 0.12);
-    box-shadow: 0 0 18px rgba(232, 191, 112, 0.35);
+    border-color: rgba(232, 191, 112, 0.42);
+    background: rgba(232, 191, 112, 0.06);
+    box-shadow: 0 0 12px rgba(232, 191, 112, 0.16);
     z-index: 5;
   }
 }
@@ -2346,8 +2421,9 @@ body.debug-hotspots .hotspot .num {
     font-size: 1.1rem;
   }
 
-  .scene-title-from {
+  .scene-from-footer {
     font-size: 0.86rem;
+    padding: 22px 12px 12px;
   }
 
   .hotspot .state {
