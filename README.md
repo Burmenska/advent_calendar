@@ -1,49 +1,40 @@
-# # Advent Calendar
+# Advent Calendar
 
-A festive, interactive advent calendar with a little something to make someone smile each day.
-
-Create a personalised calendar, share the link, and let someone discover a cheerful wish, a thoughtful question, or a little Christmas inspiration behind each door.
+A personal advent calendar you can make for someone, then share with a link. Each of the 24 doors sits on an illustrated December scene and opens onto a wish, a question, or a small prompt.
 
 ## Features
 
 - Personalise a calendar with the recipient's name and your name.
-
-- Choose between two designs: festive and beige.
-
+- Choose a design, then preview the scene before creating the link.
+- Two designs:
+  - **Christmas Magic**, a cabin fireplace with doors on stockings, walls, and books.
+  - **Winter Elegance**, a snowy house with a glowing window for each day.
 - Share the calendar through a unique link.
+- Opened days reveal the matching open-day artwork on that scene.
+- Save door-opening progress against an email address, and return to it later.
+- Ask for confirmation before a future door is opened early.
 
-- Discover a message behind each of the 24 doors.
-
-- Return to saved door-opening progress using the same email address.
-
-- Receive a confirmation prompt before opening a future door early.
+Calendars saved under the earlier `beige` design id still open with the Winter Elegance artwork.
 
 Calendars and progress are stored in Neon Postgres.
 
 ## How it works
 
 1. Enter the recipient's name and your name.
+2. Choose Christmas Magic or Winter Elegance.
+3. Preview the calendar, then create it.
+4. Copy the generated link and share it.
+5. The recipient enters an email address so opened days are remembered.
+6. Open the doors and read the messages.
 
-2. Choose a design and create the calendar.
-
-3. Copy the generated link and share it.
-
-4. The recipient enters an email address to track their progress.
-
-5. Open the doors and enjoy the messages.
-
-The email address is used to identify saved progress. It is not a verified sign-in or an email subscription.
+The email address identifies saved progress. It is not a verified sign-in, and nothing is sent to that address.
 
 ## Built with
 
 - Node.js with ES modules
-
 - HTML, CSS, and JavaScript
-
 - Neon Postgres for persistent storage
-
 - The `pg` package for database access
-
 - Vercel for hosting
 
 ## Run locally
@@ -51,7 +42,6 @@ The email address is used to identify saved progress. It is not a verified sign-
 ### Requirements
 
 - Node.js and npm
-
 - A Neon Postgres database connection string
 
 ### Setup
@@ -59,33 +49,25 @@ The email address is used to identify saved progress. It is not a verified sign-
 Install dependencies:
 
 ```bash
-
 npm install
-
 ```
 
 Set the database connection environment variable in your terminal:
 
 ```bash
-
 export AC_DB_DATABASE_URL="your-neon-connection-string"
-
 ```
 
 The command above is for macOS and Linux. In Windows PowerShell, use:
 
 ```powershell
-
 $env:AC_DB_DATABASE_URL="your-neon-connection-string"
-
 ```
 
 Start the app:
 
 ```bash
-
 npm start
-
 ```
 
 Open `http://localhost:3000` in your browser.
@@ -99,9 +81,7 @@ The app is hosted on Vercel, with a connected Neon database.
 The server expects this environment variable:
 
 ```text
-
 AC_DB_DATABASE_URL
-
 ```
 
 Make sure it is available in the deployment environment you are using.
@@ -116,24 +96,18 @@ To update it, edit the quoted phrases inside the existing message array and keep
 
 Messages are saved when a calendar is created. Updating the collection affects new calendars, not existing ones.
 
+The wording on the create page, including the design names, lives in `PAGE_COPY` at the top of `public/app.js`.
+
 ## Tests
 
 Run the date-related tests with:
 
 ```bash
-
 npm test
-
 ```
 
 ## Prototype notes
 
 - Email addresses identify progress but are not authenticated.
-
 - Anyone with a calendar link can access that calendar.
-
 - Calendar data is currently stored together in one database record, a simple approach intended for the prototype.
-
-## Planned improvements
-
-- A more festive visual design.
