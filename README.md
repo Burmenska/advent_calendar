@@ -2,15 +2,17 @@
 
 A personal advent calendar you can make for someone, then share with a link. Each of the 24 doors sits on an illustrated December scene and opens onto a wish, a question, or a small prompt.
 
+Live: [https://adventcalendar-for-you.vercel.app](https://adventcalendar-for-you.vercel.app)
+
 ## Features
 
 - Personalise a calendar with the recipient's name and your name.
 - Choose a design, then preview the scene before creating the link.
 - Two designs:
-  - **Christmas Magic**, a cabin fireplace with doors on stockings, walls, and books.
-  - **Winter Elegance**, a snowy house with a glowing window for each day.
+  - **Christmas Magic** (red), a cabin fireplace with doors on stockings, wall cubbies, hearth boxes, and books.
+  - **Winter Elegance** (blue), a snowy house with a glowing window for each day.
 - Share the calendar through a unique link.
-- Opened days reveal the matching open-day artwork on that scene.
+- Opened days swap in matching open-day artwork from the same scene positions.
 - Save door-opening progress against an email address, and return to it later.
 - Ask for confirmation before a future door is opened early.
 
@@ -28,6 +30,17 @@ Calendars and progress are stored in Neon Postgres.
 6. Open the doors and read the messages.
 
 The email address identifies saved progress. It is not a verified sign-in, and nothing is sent to that address.
+
+## Designs and open-day art
+
+Closed and open scene images live in `public/designs/`:
+
+| Design | Closed | Open |
+| --- | --- | --- |
+| Christmas Magic | `festive.jpg` | `festive-open.jpg` |
+| Winter Elegance | `elegant.jpg` | `elegant-open.jpg` |
+
+Clickable areas are defined as percent hotspots in `public/app.js`. When a day is opened, the matching patch from the open image is composed onto the closed scene at that hotspot.
 
 ## Built with
 
@@ -77,6 +90,8 @@ Keep your database connection string private. Do not commit it to the repository
 ## Deployment
 
 The app is hosted on Vercel, with a connected Neon database.
+
+Production URL: [https://adventcalendar-for-you.vercel.app](https://adventcalendar-for-you.vercel.app)
 
 The server expects this environment variable:
 

@@ -50,14 +50,16 @@ const OPEN_ART = {
   festive: {
     closed: DESIGN_ART.festive,
     open: DESIGN_ART.festiveOpen,
-    widthMul: 1.35,
-    heightMul: 1.35,
-    yNudge: 0.02,
+    widthMul: 1.25,
+    heightMul: 1.25,
+    yNudge: 0,
     byDay: {
-      1: { widthMul: 1.12, heightMul: 1.08 },
-      2: { widthMul: 1.12, heightMul: 1.08 },
-      3: { widthMul: 1.12, heightMul: 1.08 },
-      4: { widthMul: 1.12, heightMul: 1.08 },
+      /* stockings + candy cane */
+      1: { widthMul: 1.15, heightMul: 1.12 },
+      2: { widthMul: 1.15, heightMul: 1.12 },
+      3: { widthMul: 1.15, heightMul: 1.12 },
+      4: { widthMul: 1.15, heightMul: 1.12 },
+      /* wall cubbies 5–16 */
       5: { widthMul: 1.18, heightMul: 1.22 },
       6: { widthMul: 1.18, heightMul: 1.22 },
       7: { widthMul: 1.18, heightMul: 1.22 },
@@ -70,14 +72,16 @@ const OPEN_ART = {
       14: { widthMul: 1.18, heightMul: 1.22 },
       15: { widthMul: 1.18, heightMul: 1.22 },
       16: { widthMul: 1.18, heightMul: 1.22 },
-      17: { widthMul: 1.18, heightMul: 1.22 },
-      18: { widthMul: 1.18, heightMul: 1.22 },
-      19: { widthMul: 1.18, heightMul: 1.22 },
-      20: { widthMul: 1.18, heightMul: 1.22 },
-      21: { widthMul: 1.18, heightMul: 1.22 },
-      22: { widthMul: 1.18, heightMul: 1.22 },
-      23: { widthMul: 1.18, heightMul: 1.22 },
-      24: { widthMul: 1.55, heightMul: 1.35, yNudge: -0.05 }
+      /* bright plaques / house */
+      17: { widthMul: 1.3, heightMul: 1.3 },
+      18: { widthMul: 1.3, heightMul: 1.3 },
+      23: { widthMul: 1.0, heightMul: 1.0 },
+      /* hearth boxes + books — click/paste 1:1 with hotspot */
+      19: { widthMul: 1.0, heightMul: 1.0 },
+      20: { widthMul: 1.0, heightMul: 1.0 },
+      21: { widthMul: 1.0, heightMul: 1.0 },
+      22: { widthMul: 1.0, heightMul: 1.0 },
+      24: { widthMul: 1.0, heightMul: 1.0 }
     }
   }
 };
@@ -159,30 +163,30 @@ async function applyOpenedSceneArt() {
 /** Percent boxes: { left, top, w, h } — aligned to numbered objects on each design image. */
 const HOTSPOTS = {
   festive: {
-    1: { left: 61.9, top: 35.8, w: 7.2, h: 16.5 },
-    2: { left: 70.4, top: 35.2, w: 7.2, h: 16.5 },
-    3: { left: 78.9, top: 34.8, w: 7.2, h: 16.5 },
-    4: { left: 86.9, top: 34.8, w: 7.2, h: 16.5 },
-    5: { left: 25.3, top: 18.6, w: 7.4, h: 8.8 },
-    6: { left: 33.8, top: 19.1, w: 7.4, h: 8.8 },
-    7: { left: 42.3, top: 20.1, w: 7.4, h: 8.8 },
-    8: { left: 25.8, top: 31.1, w: 7.4, h: 8.8 },
-    9: { left: 33.8, top: 32.1, w: 7.4, h: 8.8 },
-    10: { left: 42.3, top: 32.6, w: 7.4, h: 8.8 },
-    11: { left: 50.9, top: 20.9, w: 7.2, h: 9.2 },
-    12: { left: 70.9, top: 15.4, w: 8.2, h: 9.2 },
-    13: { left: 50.9, top: 33.9, w: 7.2, h: 9.2 },
-    14: { left: 88.8, top: 15.4, w: 7.5, h: 9.2 },
-    15: { left: 29.0, top: 78.0, w: 9.0, h: 11.0 },
-    16: { left: 50.9, top: 46.9, w: 7.2, h: 9.2 },
-    17: { left: 25.5, top: 44.6, w: 6.0, h: 7.8 },
-    18: { left: 32.0, top: 44.6, w: 6.0, h: 7.8 },
-    19: { left: 38.5, top: 44.6, w: 6.0, h: 7.8 },
-    20: { left: 45.0, top: 44.6, w: 6.0, h: 7.8 },
-    21: { left: 49.5, top: 69.5, w: 8.0, h: 10.0 },
-    22: { left: 58.4, top: 70.2, w: 8.2, h: 10.5 },
-    23: { left: 66.4, top: 72.8, w: 8.2, h: 10.5 },
-    24: { left: 43.0, top: 75.5, w: 10.0, h: 11.0 }
+    1: { left: 60.8, top: 22.0, w: 7.6, h: 19.5 },
+    2: { left: 68.6, top: 21.5, w: 7.6, h: 19.5 },
+    3: { left: 76.4, top: 21.0, w: 7.6, h: 19.5 },
+    4: { left: 84.2, top: 20.5, w: 7.6, h: 19.5 },
+    5: { left: 27.78, top: 17.94, w: 9.11, h: 13.31 },
+    6: { left: 34.72, top: 17.94, w: 9.11, h: 13.31 },
+    7: { left: 41.66, top: 17.94, w: 9.11, h: 13.31 },
+    8: { left: 48.6, top: 17.94, w: 9.11, h: 13.31 },
+    9: { left: 27.78, top: 32.18, w: 9.11, h: 13.31 },
+    10: { left: 34.72, top: 32.18, w: 9.11, h: 13.31 },
+    11: { left: 41.66, top: 32.18, w: 9.11, h: 13.31 },
+    12: { left: 48.6, top: 32.18, w: 9.11, h: 13.31 },
+    13: { left: 27.78, top: 46.41, w: 9.11, h: 13.31 },
+    14: { left: 34.72, top: 46.41, w: 9.11, h: 13.31 },
+    15: { left: 41.66, top: 46.41, w: 9.11, h: 13.31 },
+    16: { left: 48.6, top: 46.41, w: 9.11, h: 13.31 },
+    17: { left: 93.0, top: 29.0, w: 5.5, h: 8.8 },
+    18: { left: 93.0, top: 39.0, w: 5.5, h: 8.8 },
+    19: { left: 54.51, top: 63.19, w: 5.9, h: 7.87 },
+    20: { left: 61.28, top: 63.89, w: 5.9, h: 8.1 },
+    21: { left: 68.23, top: 66.2, w: 5.21, h: 6.94 },
+    22: { left: 48.61, top: 82.18, w: 20.83, h: 15.97 },
+    23: { left: 89.41, top: 68.06, w: 5.56, h: 11.34 },
+    24: { left: 71.01, top: 83.33, w: 20.14, h: 16.2 }
   },
   elegant: {
     /* Pixel-fitted to each window's glowing glass pane */
